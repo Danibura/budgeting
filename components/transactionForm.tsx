@@ -200,13 +200,13 @@ export default function TransactionForm(props: Props) {
         <div className="flex flex-row justify-between">
           <button
             onClick={handleSave}
-            className="bg-emerald-700 text-emerald-50 text-md p-1.5 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
+            className="bg-emerald-700 text-emerald-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
           >
             Save
           </button>
           <button
             onClick={handleDelete}
-            className="bg-red-700 text-red-50 text-md p-1.5 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
+            className="bg-red-700 text-red-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
           >
             Delete
           </button>

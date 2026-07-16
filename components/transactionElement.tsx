@@ -36,7 +36,7 @@ export default function TransactionElement({
               {""}
               {transaction.type == "income" ? "+" : "-"} {transaction.amount} €
             </h1>
-            <h1 className="text-xs text-stone-300">
+            <h1 className="text-xs text-stone-400">
               {transaction.recurring
                 ? transaction.occurrencyDate
                 : transaction.date}

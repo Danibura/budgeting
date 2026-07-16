@@ -19,7 +19,7 @@ export default async function TransactionsPage() {
           <h1 className="text-xl font-bold">Your transactions</h1>
           <Link
             href="/transactions/new"
-            className="bg-emerald-700 text-emerald-50 text-md p-2 rounded-sm shadow-sm shadow-stone-500/50"
+            className="bg-emerald-700 text-emerald-50 text-md py-1.5 px-2 rounded-sm shadow-sm shadow-stone-500/50"
           >
             New
           </Link>
