@@ -23,18 +23,8 @@ export default function TransactionForm(props: Props) {
     console.log(transaction);
   }
 
-  useEffect(() => {
-    alert("React caricato");
-  }, []);
-
   return (
     <div className="flex flex-col items-center">
-      <button
-        className="bg-emerald-700 text-emerald-50 font-bold text-lg p-2 rounded-md relative z-50"
-        onClick={() => alert("Ciao")}
-      >
-        Ciao
-      </button>
       <form onSubmit={handleSubmit} className="flex flex-col w-full">
         <div className="flex flex-col gap-4 w-full p-4">
           <div className="flex flex-col gap-1">
@@ -91,7 +81,6 @@ export default function TransactionForm(props: Props) {
               id="recurring"
               checked={transaction.recurring}
               onCheckedChange={(checked) => {
-                alert("Checked");
                 handleChange("recurring", checked);
               }}
               className="data-checked:bg-emerald-600"
@@ -103,7 +92,7 @@ export default function TransactionForm(props: Props) {
               Recurring
             </label>
           </div>
-          {/*  !transaction.recurring && (
+          {!transaction.recurring && (
             <div className="flex flex-col gap-1">
               <h2 className="text-stone-300 font-bold text-sm">Date</h2>
               <input
@@ -113,7 +102,7 @@ export default function TransactionForm(props: Props) {
                 className="border border-stone-400 p-2 rounded-sm"
               />
             </div>
-          ) */}
+          )}
           <div className="flex flex-row justify-end">
             <input
               type="submit"
