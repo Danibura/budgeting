@@ -3,11 +3,6 @@ import Header from "@/components/header";
 import TransactionsList from "@/components/transactionsList";
 
 export default async function TransactionsPage() {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_URL}/api/transactions/`,
-  );
-  const transactions = await response.json();
-  console.log(transactions);
   return (
     <div className="bg-stone-50 min-h-screen">
       <Header title="Transactions"></Header>
@@ -22,7 +17,7 @@ export default async function TransactionsPage() {
           </Link>
         </div>
         <div className="p-4 w-full">
-          <TransactionsList transactions={transactions} />
+          <TransactionsList />
         </div>
       </div>
     </div>
