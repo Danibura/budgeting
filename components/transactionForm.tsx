@@ -22,7 +22,7 @@ export default function TransactionForm(props: Props) {
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/transactions/", {
+      const response = await fetch("/api/transactions/", {
         method: props.transaction ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",

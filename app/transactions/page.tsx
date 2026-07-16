@@ -3,7 +3,7 @@ import Header from "@/components/header";
 import TransactionsList from "@/components/transactionsList";
 
 export default async function TransactionsPage() {
-  const response = await fetch("http://localhost:3000/api/transactions/", {
+  const response = await fetch("/api/transactions/", {
     method: "GET",
   });
   const transactions = await response.json();
