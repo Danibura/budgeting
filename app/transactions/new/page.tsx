@@ -3,9 +3,11 @@ import TransactionForm from "@/components/transactionForm";
 
 export default function NewTransactionPage() {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header title="New transaction"></Header>
-      <TransactionForm />
+      <div className="bg-stone-100 flex-1">
+        <TransactionForm />
+      </div>
     </div>
   );
 }

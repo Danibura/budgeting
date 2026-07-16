@@ -1,4 +1,4 @@
-export type Transaction = {
+export interface Transaction {
   id: number;
   type: string;
   category: string;
@@ -8,4 +8,8 @@ export type Transaction = {
   recurring: boolean;
   frequency?: "daily" | "monthly" | "annually";
   endDate?: string;
-};
+}
+
+export interface TransactionWithOccurrency extends Transaction {
+  occurrencyDate?: string;
+}
