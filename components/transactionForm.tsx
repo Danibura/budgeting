@@ -22,13 +22,16 @@ export default function TransactionForm(props: Props) {
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     try {
-      const response = await fetch("/api/transactions/", {
-        method: props.transaction ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/transactions/`,
+        {
+          method: props.transaction ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(transaction),
         },
-        body: JSON.stringify(transaction),
-      });
+      );
 
       const savedTransaction = await response.json();
       console.log(savedTransaction);
