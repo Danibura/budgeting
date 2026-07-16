@@ -112,13 +112,13 @@ export default function TransactionForm(props: Props) {
             {transaction.type == "income" &&
               incomeCategories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.label}
+                  {category.emoji + " " + category.label}
                 </option>
               ))}
             {transaction.type == "outcome" &&
               outcomeCategories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.label}
+                  {category.emoji + " " + category.label}
                 </option>
               ))}
           </select>
