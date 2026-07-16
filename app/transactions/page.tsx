@@ -5,9 +5,6 @@ import TransactionsList from "@/components/transactionsList";
 export default async function TransactionsPage() {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/transactions/`,
-    {
-      method: "GET",
-    },
   );
   const transactions = await response.json();
   console.log(transactions);

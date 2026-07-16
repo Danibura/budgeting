@@ -35,7 +35,7 @@ export default function TransactionForm(props: Props) {
 
       const savedTransaction = await response.json();
       console.log(savedTransaction);
-      router.replace("/transactions/");
+      router.replace(`${process.env.NEXT_PUBLIC_URL}/api/transactions/`);
     } catch (error) {
       console.error(error);
     }
