@@ -52,20 +52,17 @@ export default function TransactionForm(props: Props) {
 
   async function handleSave() {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/transactions/`,
-        {
-          method: props.transaction ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(transaction),
+      const response = await fetch(`/api/transactions/`, {
+        method: props.transaction ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(transaction),
+      });
 
       const savedTransaction = await response.json();
       console.log(savedTransaction);
-      router.replace(`${process.env.NEXT_PUBLIC_URL}/transactions/`);
+      router.replace(`/transactions/`);
     } catch (error) {
       console.error(error);
     }
@@ -73,20 +70,17 @@ export default function TransactionForm(props: Props) {
 
   async function handleDelete() {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/transactions/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(transaction),
+      const response = await fetch(`/api/transactions/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(transaction),
+      });
 
       const savedTransaction = await response.json();
       console.log(savedTransaction);
-      router.replace(`${process.env.NEXT_PUBLIC_URL}/transactions/`);
+      router.replace(`/transactions/`);
     } catch (error) {
       console.error(error);
     }

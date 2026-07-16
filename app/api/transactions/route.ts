@@ -3,6 +3,8 @@ import { transactions } from "@/db/schema";
 import { Transaction } from "@/types/types";
 import { eq } from "drizzle-orm";
 
+import { revalidatePath } from "next/cache";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const limit = searchParams.get("limit");
@@ -29,6 +31,8 @@ export async function POST(request: Request) {
   };
 
   const result = await db.insert(transactions).values(values).returning();
+  revalidatePath("/transactions");
+
   return Response.json(result);
 }
 
@@ -49,6 +53,7 @@ export async function PUT(request: Request) {
     .update(transactions)
     .set(values)
     .where(eq(transactions.id, Number(body.id)));
+  revalidatePath("/transactions");
   return Response.json(result);
 }
 
@@ -59,6 +64,6 @@ export async function DELETE(request: Request) {
     .delete(transactions)
     .where(eq(transactions.id, body.id))
     .returning();
-
+  revalidatePath("/transactions");
   return Response.json(result);
 }
