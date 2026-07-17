@@ -17,7 +17,6 @@ export default function TransactionForm(props: Props) {
 
   function handleChange(field: string, value: string | number | boolean) {
     setTransaction((prev) => ({ ...prev, [field]: value }));
-    console.log(value);
   }
 
   function typeChange(value: string) {

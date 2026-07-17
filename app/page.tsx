@@ -1,11 +1,12 @@
 import TransactionsTab from "@/components/transactionsTab";
 import Header from "@/components/header";
-import { fullTransactions } from "@/lib/utils";
+import { fullTransactions, calcMonthSavings } from "@/lib/utils";
 import { db } from "@/db/drizzle";
 import { transactions } from "@/db/schema";
 import { Transaction } from "@/types/types";
-import SavingsTab from "@/components/savingsTab";
-import { calcMonthSavings } from "@/lib/utils";
+import InOutTab from "@/components/inOutTab";
+import Link from "next/link";
+import ActualSavings from "@/components/actualSavings";
 
 export default async function Home() {
   const result = (await db.select().from(transactions)) as Transaction[];
@@ -17,8 +18,13 @@ export default async function Home() {
     <div className="flex flex-col flex-1 bg-white font-sans w-full">
       <Header title="Home"></Header>
       <div className="flex flex-col flex-1 items-center bg-stone-100 font-sans w-full p-4 gap-8">
-        <SavingsTab monthSavings={monthSavings} />
+        <Link href="/savings" className="w-full max-w-4xl">
+          <ActualSavings monthSavings={monthSavings} />
+        </Link>
         <TransactionsTab transactions={lastThree} />
+        <Link href="/inOut/" className="w-full max-w-xl">
+          <InOutTab transactions={full} />
+        </Link>
       </div>
     </div>
   );

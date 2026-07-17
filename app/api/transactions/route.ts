@@ -35,6 +35,7 @@ export async function POST(request: Request) {
   revalidatePath("/");
   revalidatePath("/transactions");
   revalidatePath("/savings");
+  revalidatePath("inOut");
   return Response.json(result);
 }
 
@@ -59,6 +60,7 @@ export async function PUT(request: Request) {
   revalidatePath("/");
   revalidatePath("/transactions");
   revalidatePath("/savings");
+  revalidatePath("inOut");
   return Response.json(result);
 }
 
@@ -73,5 +75,6 @@ export async function DELETE(request: Request) {
   revalidatePath("/");
   revalidatePath("/transactions");
   revalidatePath("/savings");
+  revalidatePath("inOut");
   return Response.json(result);
 }
