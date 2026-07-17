@@ -13,3 +13,8 @@ export interface Transaction {
 export interface TransactionWithOccurrency extends Transaction {
   occurrencyDate?: string;
 }
+
+export interface MonthSavings {
+  month: string;
+  savings: number;
+}

@@ -31,8 +31,10 @@ export async function POST(request: Request) {
   };
 
   const result = await db.insert(transactions).values(values).returning();
-  revalidatePath("/transactions");
 
+  revalidatePath("/");
+  revalidatePath("/transactions");
+  revalidatePath("/savings");
   return Response.json(result);
 }
 
@@ -53,7 +55,10 @@ export async function PUT(request: Request) {
     .update(transactions)
     .set(values)
     .where(eq(transactions.id, Number(body.id)));
+
+  revalidatePath("/");
   revalidatePath("/transactions");
+  revalidatePath("/savings");
   return Response.json(result);
 }
 
@@ -64,6 +69,9 @@ export async function DELETE(request: Request) {
     .delete(transactions)
     .where(eq(transactions.id, body.id))
     .returning();
+
+  revalidatePath("/");
   revalidatePath("/transactions");
+  revalidatePath("/savings");
   return Response.json(result);
 }

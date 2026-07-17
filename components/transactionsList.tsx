@@ -4,6 +4,7 @@ import type { TransactionWithOccurrency } from "@/types/types";
 import TransactionElement from "./transactionElement";
 import { useEffect, useState } from "react";
 import SearchBar from "./searchBar";
+import Link from "next/link";
 
 export default function TransactionsList({
   initialTransactions,
@@ -11,7 +12,6 @@ export default function TransactionsList({
   initialTransactions: TransactionWithOccurrency[];
 }) {
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("category");
   const filtered = filterTransactions(initialTransactions);
 
   function filterTransactions(transactions: TransactionWithOccurrency[]) {
@@ -29,7 +29,9 @@ export default function TransactionsList({
       <SearchBar search={search} setSearch={setSearch} />
       <div className="flex flex-col w-full   rounded-xl  shadow-sm shadow-stone-500/50 backdrop-blur-lg bg-white/50 mt-4">
         {filtered.map((element, index) => (
-          <TransactionElement key={index} transaction={element} />
+          <Link href={`/transactions/${element.id}`} key={index}>
+            <TransactionElement transaction={element} />
+          </Link>
         ))}
       </div>
     </div>

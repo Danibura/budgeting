@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Transaction } from "@/types/types";
+import type { Transaction, TransactionWithOccurrency } from "@/types/types";
+import type { MonthSavings } from "@/types/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -69,25 +70,141 @@ export function addFrequency(date: string, frequency: string) {
 }
 
 export function fullTransactions(transactions: Transaction[]) {
-  const fullTransactions = transactions.flatMap((transaction) => {
-    if (!transaction.recurring) return transaction;
-    else {
-      let occurrences = [];
-      let nextDate = transaction.date;
-      let today = new Date().toISOString().split("T")[0];
-      while (
-        nextDate < today &&
-        (!transaction.endDate || nextDate < transaction.endDate)
-      ) {
-        occurrences.push({
-          ...transaction,
-          occurrencyDate: nextDate,
-        });
-        nextDate = addFrequency(nextDate, transaction.frequency!);
-      }
+  const fullTransactions: TransactionWithOccurrency[] = transactions.flatMap(
+    (transaction) => {
+      if (!transaction.recurring) return transaction;
+      else {
+        let occurrences = [];
+        let nextDate = transaction.date;
+        let today = new Date().toISOString().split("T")[0];
+        while (
+          nextDate < today &&
+          (!transaction.endDate || nextDate < transaction.endDate)
+        ) {
+          occurrences.push({
+            ...transaction,
+            occurrencyDate: nextDate,
+          });
+          nextDate = addFrequency(nextDate, transaction.frequency!);
+        }
 
-      return occurrences;
+        return occurrences;
+      }
+    },
+  );
+  const sorted = orderTransactions(fullTransactions, "desc");
+  return sorted;
+}
+
+export function orderTransactions(
+  transactions: TransactionWithOccurrency[],
+  order: string,
+) {
+  let sorted = transactions;
+  if (order == "asc")
+    sorted.sort((a, b) => {
+      let aDate = a.recurring ? a.occurrencyDate : a.date;
+      let bDate = b.recurring ? b.occurrencyDate : b.date;
+      return aDate!.localeCompare(bDate!);
+    });
+  else
+    sorted.sort((a, b) => {
+      let aDate = a.recurring ? a.occurrencyDate : a.date;
+      let bDate = b.recurring ? b.occurrencyDate : b.date;
+      return bDate!.localeCompare(aDate!);
+    });
+  return sorted;
+}
+
+export function calcMonthSavings(transactions: TransactionWithOccurrency[]) {
+  const sorted = orderTransactions(transactions, "asc");
+  const monthSavings: MonthSavings[] = [];
+  let today = new Date().toISOString().split("T")[0];
+  let nextMonth = transactions[0].date;
+  while (nextMonth < today) {
+    monthSavings.push({ month: nextMonth, savings: 0 });
+    nextMonth = addFrequency(nextMonth, "monthly");
+  }
+
+  sorted.forEach((transaction) => {
+    const transactionDate = transaction.recurring
+      ? transaction.occurrencyDate
+      : transaction.date;
+    const year1 = new Date(transactionDate!).getFullYear();
+    const month1 = new Date(transactionDate!).getMonth();
+
+    const findMonth = monthSavings.find((el) => {
+      const year2 = new Date(el.month).getFullYear();
+      const month2 = new Date(el.month).getMonth();
+      return year1 == year2 && month1 == month2;
+    });
+
+    if (findMonth != undefined) {
+      if (transaction.type == "income") findMonth.savings += transaction.amount;
+      else findMonth.savings -= transaction.amount;
     }
   });
-  return fullTransactions;
+
+  let total = 0;
+  monthSavings.forEach((el) => {
+    total += el.savings;
+    el.savings = total;
+  });
+
+  return monthSavings;
+}
+
+export function thisYearSavings(monthSavings: MonthSavings[], year1: number) {
+  const yearSavings = monthSavings.filter((el) => {
+    const year2 = new Date(el.month).getFullYear();
+    return year1 == year2;
+  });
+  return yearSavings;
+}
+
+export function calcFirstYear(monthSavings: MonthSavings[]) {
+  let firstYear = new Date(monthSavings[0].month).getFullYear();
+  return firstYear;
+}
+
+export function calcFirstMonth(monthSavings: MonthSavings[]) {
+  let firstMonth = new Date(monthSavings[0].month).toLocaleString("en-US", {
+    month: "long",
+  });
+  return firstMonth;
+}
+
+export function calcLastMonth(monthSavings: MonthSavings[]) {
+  const lastIndex = monthSavings.length - 1;
+  let lastMonth = new Date(monthSavings[lastIndex].month).toLocaleString(
+    "en-US",
+    {
+      month: "long",
+    },
+  );
+  return lastMonth;
+}
+
+export function calcTrend(monthSavings: MonthSavings[]) {
+  const thisMonth = new Date().getMonth();
+  const thisYear = new Date().getFullYear();
+
+  const prevMonth = monthSavings.find((el) => {
+    const elMonth = new Date(el.month).getMonth();
+    const elYear = new Date(el.month).getFullYear();
+
+    return thisMonth - 1 == elMonth && thisYear == elYear;
+  });
+
+  const curMonth = monthSavings.find((el) => {
+    const elMonth = new Date(el.month).getMonth();
+    const elYear = new Date(el.month).getFullYear();
+
+    return thisMonth == elMonth && thisYear == elYear;
+  });
+
+  let difference = 0;
+  if (curMonth && prevMonth) difference = curMonth.savings - prevMonth.savings;
+
+  return difference;
 }

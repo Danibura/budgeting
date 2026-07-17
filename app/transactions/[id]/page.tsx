@@ -19,7 +19,7 @@ export default async function TransactionPage({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header title="New transaction"></Header>
+      <Header title="Edit transaction"></Header>
       <div className="bg-stone-100 flex-1 flex flex-col items-center w-full">
         <TransactionForm transaction={transaction} />
       </div>

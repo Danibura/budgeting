@@ -9,7 +9,6 @@ import { fullTransactions } from "@/lib/utils";
 export default async function TransactionsPage() {
   const result = (await db.select().from(transactions)) as Transaction[];
   const full = fullTransactions(result);
-  console.log(full);
 
   return (
     <div className="bg-stone-100 min-h-screen">
