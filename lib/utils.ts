@@ -112,8 +112,8 @@ export function fullTransactions(transactions: Transaction[]) {
         let nextDate = transaction.date;
         let today = new Date().toISOString().split("T")[0];
         while (
-          nextDate < today &&
-          (!transaction.endDate || nextDate < transaction.endDate)
+          nextDate <= today &&
+          (!transaction.endDate || nextDate <= transaction.endDate)
         ) {
           occurrences.push({
             ...transaction,
@@ -151,39 +151,42 @@ export function orderTransactions(
 }
 
 export function calcMonthSavings(transactions: TransactionWithOccurrency[]) {
-  const sorted = orderTransactions(transactions, "asc");
-  const monthSavings: MonthSavings[] = [];
-  let today = new Date().toISOString().split("T")[0];
-  let nextMonth = transactions[0].date;
-  while (nextMonth < today) {
-    monthSavings.push({ month: nextMonth, savings: 0 });
-    nextMonth = addFrequency(nextMonth, "monthly");
-  }
+  let monthSavings: MonthSavings[] = [];
+  if (transactions.length > 0) {
+    const sorted = orderTransactions(transactions, "asc");
+    let today = new Date().toISOString().split("T")[0];
+    let nextMonth = transactions[0].date;
+    while (nextMonth < today) {
+      monthSavings.push({ month: nextMonth, savings: 0 });
+      nextMonth = addFrequency(nextMonth, "monthly");
+    }
 
-  sorted.forEach((transaction) => {
-    const transactionDate = transaction.recurring
-      ? transaction.occurrencyDate
-      : transaction.date;
-    const year1 = new Date(transactionDate!).getFullYear();
-    const month1 = new Date(transactionDate!).getMonth();
+    sorted.forEach((transaction) => {
+      const transactionDate = transaction.recurring
+        ? transaction.occurrencyDate
+        : transaction.date;
+      const year1 = new Date(transactionDate!).getFullYear();
+      const month1 = new Date(transactionDate!).getMonth();
 
-    const findMonth = monthSavings.find((el) => {
-      const year2 = new Date(el.month).getFullYear();
-      const month2 = new Date(el.month).getMonth();
-      return year1 == year2 && month1 == month2;
+      const findMonth = monthSavings.find((el) => {
+        const year2 = new Date(el.month).getFullYear();
+        const month2 = new Date(el.month).getMonth();
+        return year1 == year2 && month1 == month2;
+      });
+
+      if (findMonth != undefined) {
+        if (transaction.type == "income")
+          findMonth.savings += transaction.amount;
+        else findMonth.savings -= transaction.amount;
+      }
     });
 
-    if (findMonth != undefined) {
-      if (transaction.type == "income") findMonth.savings += transaction.amount;
-      else findMonth.savings -= transaction.amount;
-    }
-  });
-
-  let total = 0;
-  monthSavings.forEach((el) => {
-    total += el.savings;
-    el.savings = total;
-  });
+    let total = 0;
+    monthSavings.forEach((el) => {
+      total += el.savings;
+      el.savings = total;
+    });
+  }
 
   return monthSavings;
 }
@@ -280,33 +283,37 @@ export function calcTrend(monthSavings: MonthSavings[]) {
 }
 
 export function calcInOut(transactions: TransactionWithOccurrency[]) {
-  const sorted = orderTransactions(transactions, "asc");
-  const monthInOut: MonthInOut[] = [];
-  let today = new Date().toISOString().split("T")[0];
-  let nextMonth = transactions[0].date;
-  while (nextMonth < today) {
-    monthInOut.push({ month: nextMonth, incomes: 0, outcomes: 0 });
-    nextMonth = addFrequency(nextMonth, "monthly");
-  }
+  let monthInOut: MonthInOut[] = [];
 
-  sorted.forEach((transaction) => {
-    const transactionDate = transaction.recurring
-      ? transaction.occurrencyDate
-      : transaction.date;
-    const year1 = new Date(transactionDate!).getFullYear();
-    const month1 = new Date(transactionDate!).getMonth();
-
-    const findMonth = monthInOut.find((el) => {
-      const year2 = new Date(el.month).getFullYear();
-      const month2 = new Date(el.month).getMonth();
-      return year1 == year2 && month1 == month2;
-    });
-
-    if (findMonth != undefined) {
-      if (transaction.type == "income") findMonth.incomes += transaction.amount;
-      else findMonth.outcomes += transaction.amount;
+  if (transactions.length > 0) {
+    const sorted = orderTransactions(transactions, "asc");
+    let today = new Date().toISOString().split("T")[0];
+    let nextMonth = transactions[0].date;
+    while (nextMonth <= today) {
+      monthInOut.push({ month: nextMonth, incomes: 0, outcomes: 0 });
+      nextMonth = addFrequency(nextMonth, "monthly");
     }
-  });
+
+    sorted.forEach((transaction) => {
+      const transactionDate = transaction.recurring
+        ? transaction.occurrencyDate
+        : transaction.date;
+      const year1 = new Date(transactionDate!).getFullYear();
+      const month1 = new Date(transactionDate!).getMonth();
+
+      const findMonth = monthInOut.find((el) => {
+        const year2 = new Date(el.month).getFullYear();
+        const month2 = new Date(el.month).getMonth();
+        return year1 == year2 && month1 == month2;
+      });
+
+      if (findMonth != undefined) {
+        if (transaction.type == "income")
+          findMonth.incomes += transaction.amount;
+        else findMonth.outcomes += transaction.amount;
+      }
+    });
+  }
 
   return monthInOut;
 }

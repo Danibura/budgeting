@@ -8,23 +8,32 @@ import InOutTab from "@/components/inOutTab";
 import Link from "next/link";
 import ActualSavings from "@/components/actualSavings";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 export default async function Home() {
   const result = (await db.select().from(transactions)) as Transaction[];
+  console.log(result);
   const full = fullTransactions(result);
   const lastThree = full.slice(0, 3);
   const monthSavings = calcMonthSavings(full);
-
+  console.log("Full ", full);
   return (
     <div className="flex flex-col flex-1 bg-white font-sans w-full">
       <Header title="Home"></Header>
+
       <div className="flex flex-col flex-1 items-center bg-stone-100 font-sans w-full p-4 gap-8">
-        <Link href="/savings" className="w-full max-w-4xl">
-          <ActualSavings monthSavings={monthSavings} />
-        </Link>
+        {full.length > 0 && (
+          <Link href="/savings" className="w-full max-w-4xl">
+            <ActualSavings monthSavings={monthSavings} />
+          </Link>
+        )}
+
         <TransactionsTab transactions={lastThree} />
-        <Link href="/inOut/" className="w-full max-w-xl">
-          <InOutTab transactions={full} />
-        </Link>
+        {full.length > 0 && (
+          <Link href="/inOut/" className="w-full max-w-xl">
+            <InOutTab transactions={full} />
+          </Link>
+        )}
       </div>
     </div>
   );

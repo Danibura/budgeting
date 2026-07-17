@@ -97,7 +97,7 @@ export default function CategoriesChart(props: Props) {
         </button>
       </div>
 
-      <Card className="flex flex-col w-full shadow-sm shadow-stone-500/50">
+      <Card className="flex flex-col w-full max-w-xl shadow-sm shadow-stone-500/50">
         <CardHeader className="items-center pb-0">
           <CardTitle>
             Yearly {props.type == "income" ? "incomes" : "outcomes"}
