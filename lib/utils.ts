@@ -1,11 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type {
-  Transaction,
-  TransactionWithOccurrency,
-  MonthSavings,
-  MonthInOut,
-} from "@/types/types";
+import type { MonthSavings, MonthInOut } from "@/types/types";
+import { Transaction, TransactionWithOccurrency } from "./validation";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -104,29 +100,33 @@ export function addFrequency(date: string, frequency: string) {
 }
 
 export function fullTransactions(transactions: Transaction[]) {
-  const fullTransactions: TransactionWithOccurrency[] = transactions.flatMap(
-    (transaction) => {
-      if (!transaction.recurring) return transaction;
-      else {
-        let occurrences = [];
-        let nextDate = transaction.date;
-        let today = new Date().toISOString().split("T")[0];
-        while (
-          nextDate <= today &&
-          (!transaction.endDate || nextDate <= transaction.endDate)
-        ) {
-          occurrences.push({
-            ...transaction,
-            occurrencyDate: nextDate,
-          });
-          nextDate = addFrequency(nextDate, transaction.frequency!);
-        }
+  let sorted: TransactionWithOccurrency[] = [];
+  if (transactions.length > 0) {
+    const fullTransactions: TransactionWithOccurrency[] = transactions.flatMap(
+      (transaction) => {
+        if (!transaction.recurring) return transaction;
+        else {
+          let occurrences = [];
+          let nextDate = transaction.date;
+          let today = new Date().toISOString().split("T")[0];
+          while (
+            nextDate <= today &&
+            (!transaction.endDate || nextDate <= transaction.endDate)
+          ) {
+            occurrences.push({
+              ...transaction,
+              occurrencyDate: nextDate,
+            });
+            nextDate = addFrequency(nextDate, transaction.frequency!);
+          }
 
-        return occurrences;
-      }
-    },
-  );
-  const sorted = orderTransactions(fullTransactions, "desc");
+          return occurrences;
+        }
+      },
+    );
+    sorted = orderTransactions(fullTransactions, "desc");
+  }
+
   return sorted;
 }
 

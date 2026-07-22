@@ -1,55 +1,49 @@
 "use client";
 import { useState } from "react";
-import type { Transaction } from "@/types/types";
+import {
+  CreateTransaction,
+  createTransactionSchema,
+  selectTransactionSchema,
+  Transaction,
+} from "@/lib/validation";
 import { incomeCategories } from "@/lib/utils";
 import { outcomeCategories } from "@/lib/utils";
 import { Switch } from "./ui/switch";
 import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = { transaction?: Transaction };
 
 export default function TransactionForm(props: Props) {
+  const form = useForm({
+    resolver: zodResolver(createTransactionSchema),
+    defaultValues: props.transaction ?? {
+      id: 0,
+      type: "income",
+      category: incomeCategories[0].id,
+      description: "",
+      date: new Date().toISOString().split("T")[0],
+      amount: 1,
+      recurring: false,
+    },
+  });
+
   const router = useRouter();
 
-  const [transaction, setTransaction] = useState<Transaction>(
-    props.transaction ?? emptyTransaction,
-  );
-
-  function handleChange(field: string, value: string | number | boolean) {
-    setTransaction((prev) => ({ ...prev, [field]: value }));
-  }
-
-  function typeChange(value: string) {
-    if (value == "income")
-      setTransaction((prev) => ({
-        ...prev,
-        type: value,
-        category: incomeCategories[0].id,
-      }));
-    else
-      setTransaction((prev) => ({
-        ...prev,
-        type: value,
-        category: outcomeCategories[0].id,
-      }));
+  function typeChange(value: "income" | "outcome") {
+    form.setValue("type", value);
+    if (value == "income") form.setValue("category", incomeCategories[0].id);
+    else form.setValue("category", outcomeCategories[0].id);
   }
 
   function recurringChange(value: boolean) {
-    if (value == true)
-      setTransaction((prev) => ({
-        ...prev,
-        recurring: value,
-        frequency: "daily",
-      }));
-    else
-      setTransaction((prev) => ({
-        ...prev,
-        recurring: value,
-        frequency: undefined,
-      }));
+    form.setValue("recurring", value);
+    form.setValue("frequency", value ? "daily" : undefined);
   }
 
-  async function handleSave() {
+  async function handleSave(transaction: CreateTransaction) {
+    console.log(transaction);
     try {
       const response = await fetch(`/api/transactions/`, {
         method: props.transaction ? "PUT" : "POST",
@@ -68,31 +62,40 @@ export default function TransactionForm(props: Props) {
   }
 
   async function handleDelete() {
-    try {
-      const response = await fetch(`/api/transactions/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(transaction),
-      });
+    if (props.transaction) {
+      const transaction: Transaction = props.transaction;
+      try {
+        const response = await fetch(`/api/transactions/`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(transaction),
+        });
 
-      const savedTransaction = await response.json();
-      console.log(savedTransaction);
-      router.replace(`/transactions/`);
-    } catch (error) {
-      console.error(error);
+        const savedTransaction = await response.json();
+        console.log(savedTransaction);
+        router.replace(`/transactions/`);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl">
-      <div className="flex flex-col gap-4 w-full p-4">
+      <form
+        onSubmit={form.handleSubmit(handleSave, (errors) =>
+          console.log("Errors ", errors),
+        )}
+        className="flex flex-col gap-4 w-full p-4"
+      >
         <div className="flex flex-col gap-1">
           <h2 className="text-stone-400 font-bold text-sm">Type</h2>
           <select
-            onChange={(e) => typeChange(e.currentTarget.value)}
-            value={transaction.type}
+            {...form.register("type", {
+              onChange: (e) => typeChange(e.target.value),
+            })}
             className="border border-stone-400 rounded-sm p-2 bg-white"
             required
           >
@@ -103,18 +106,17 @@ export default function TransactionForm(props: Props) {
         <div className="flex flex-col gap-1">
           <h2 className="text-stone-400 font-bold text-sm">Category</h2>
           <select
-            onChange={(e) => handleChange("category", e.currentTarget.value)}
-            value={transaction.category}
+            {...form.register("category")}
             className="border border-stone-400 rounded-sm p-2 bg-white"
             required
           >
-            {transaction.type == "income" &&
+            {form.watch("type") == "income" &&
               incomeCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.emoji + " " + category.label}
                 </option>
               ))}
-            {transaction.type == "outcome" &&
+            {form.watch("type") == "outcome" &&
               outcomeCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.emoji + " " + category.label}
@@ -125,8 +127,7 @@ export default function TransactionForm(props: Props) {
         <div className="flex flex-col gap-1">
           <h2 className="text-stone-400 font-bold text-sm">Description</h2>
           <textarea
-            value={transaction.description}
-            onChange={(e) => handleChange("description", e.target.value)}
+            {...form.register("description")}
             className="border border-stone-400 rounded-sm p-2 bg-white"
           />
         </div>
@@ -134,8 +135,7 @@ export default function TransactionForm(props: Props) {
           <h2 className="text-stone-400 font-bold text-sm ">Amount</h2>
           <input
             type="number"
-            value={transaction.amount}
-            onChange={(e) => handleChange("amount", e.target.value)}
+            {...form.register("amount", { valueAsNumber: true })}
             className="border border-stone-400 rounded-sm p-2 bg-white"
             required
             min={1}
@@ -143,12 +143,19 @@ export default function TransactionForm(props: Props) {
         </div>
         <div className="flex flex-row justify-between items-center w-full">
           <div className="flex flex-row gap-2 mt-2 items-center">
-            <Switch
-              id="recurring"
-              checked={transaction.recurring}
-              onCheckedChange={(checked) => recurringChange(checked)}
-              className="data-checked:bg-emerald-600"
+            <Controller
+              name="recurring"
+              control={form.control}
+              render={({ field }) => (
+                <Switch
+                  id="recurring"
+                  checked={field.value}
+                  onCheckedChange={recurringChange}
+                  className="data-checked:bg-emerald-600"
+                />
+              )}
             />
+
             <label
               htmlFor="recurring"
               className="text-stone-500 font-bold text-sm"
@@ -156,15 +163,12 @@ export default function TransactionForm(props: Props) {
               Recurring
             </label>
           </div>
-          {transaction.recurring && (
+          {form.watch("recurring") && (
             <div className="flex flex-col gap-1">
               <h2 className="text-stone-400 font-bold text-sm">Frequency</h2>
               <select
                 className="border border-stone-400 rounded-sm p-2 bg-white"
-                value={transaction.frequency ?? ""}
-                onChange={(e) =>
-                  handleChange("frequency", e.currentTarget.value)
-                }
+                {...form.register("frequency")}
               >
                 <option value="daily">Daily</option>
                 <option value="monthly">Monthly</option>
@@ -175,52 +179,43 @@ export default function TransactionForm(props: Props) {
         </div>
         <div className="flex flex-col gap-1 ">
           <h2 className="text-stone-400 font-bold text-sm">
-            {transaction.recurring ? "Start Date" : "Date"}
+            {form.watch("recurring") ? "Start Date" : "Date"}
           </h2>
           <input
             type="date"
-            value={transaction.date}
-            onChange={(e) => handleChange("date", e.currentTarget.value)}
+            {...form.register("date")}
             className="border border-stone-400 p-2 rounded-sm bg-white"
           />
         </div>
 
-        {transaction.recurring && (
+        {form.watch("recurring") && (
           <div className="flex flex-col gap-1">
             <h2 className="text-stone-400 font-bold text-sm">End Date</h2>
             <input
               type="date"
-              value={transaction.endDate ?? ""}
-              onChange={(e) => handleChange("endDate", e.currentTarget.value)}
+              {...form.register("endDate")}
               className="border border-stone-400 p-2 rounded-sm bg-white"
             />
           </div>
         )}
         <div className="flex flex-row justify-between">
           <button
-            onClick={handleSave}
+            type="submit"
             className="bg-emerald-700 text-emerald-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
           >
             Save
           </button>
-          <button
-            onClick={handleDelete}
-            className="bg-red-700 text-red-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
-          >
-            Delete
-          </button>
+          {props.transaction && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-700 text-red-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
+            >
+              Delete
+            </button>
+          )}
         </div>
-      </div>
+      </form>
     </div>
   );
 }
-
-const emptyTransaction: Transaction = {
-  id: 0,
-  type: "income",
-  category: incomeCategories[0].id,
-  description: "",
-  date: new Date().toISOString().split("T")[0],
-  amount: 1,
-  recurring: false,
-};

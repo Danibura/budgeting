@@ -1,6 +1,6 @@
 "use client";
 
-import type { TransactionWithOccurrency } from "@/types/types";
+import type { TransactionWithOccurrency } from "@/lib/validation";
 import TransactionElement from "./transactionElement";
 import { useEffect, useState } from "react";
 import SearchBar from "./searchBar";

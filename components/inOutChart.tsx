@@ -1,6 +1,6 @@
 "use client";
 
-import type { Transaction, TransactionWithOccurrency } from "@/types/types";
+import type { Transaction, TransactionWithOccurrency } from "@/lib/validation";
 import { calcInOut } from "@/lib/utils";
 import {
   calcFirstYear,

@@ -3,17 +3,31 @@ import Header from "@/components/header";
 import { fullTransactions, calcMonthSavings } from "@/lib/utils";
 import { db } from "@/db/drizzle";
 import { transactions } from "@/db/schema";
-import { Transaction } from "@/types/types";
+import { Transaction, TransactionWithOccurrency } from "@/lib/validation";
 import InOutTab from "@/components/inOutTab";
 import Link from "next/link";
 import ActualSavings from "@/components/actualSavings";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export default async function Home() {
-  const result = (await db.select().from(transactions)) as Transaction[];
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/login");
+
+  const result = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.userId, session.user.id))) as Transaction[];
+
   console.log(result);
-  const full = fullTransactions(result);
+  const full: TransactionWithOccurrency[] = fullTransactions(result);
   const lastThree = full.slice(0, 3);
   const monthSavings = calcMonthSavings(full);
   console.log("Full ", full);

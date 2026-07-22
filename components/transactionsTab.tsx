@@ -1,9 +1,9 @@
-import { Transaction } from "@/types/types";
+import { TransactionWithOccurrency } from "@/lib/validation";
 import Link from "next/link";
 import TransactionElement from "./transactionElement";
 
 type Props = {
-  transactions: Transaction[];
+  transactions: TransactionWithOccurrency[];
 };
 
 export default function TransactionsTab(props: Props) {

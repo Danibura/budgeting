@@ -3,13 +3,27 @@ import Link from "next/link";
 import Header from "@/components/header";
 import { db } from "@/db/drizzle";
 import { transactions } from "@/db/schema";
-import type { Transaction } from "@/types/types";
+import type { Transaction } from "@/lib/validation";
 import { fullTransactions } from "@/lib/utils";
 import SavingsChart from "@/components/savingsChart";
 import ActualSavings from "@/components/actualSavings";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function SavingsPage() {
-  const result = (await db.select().from(transactions)) as Transaction[];
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/login");
+
+  const result = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.userId, session.user.id))) as Transaction[];
+
   const full = fullTransactions(result);
   const monthSavings = calcMonthSavings(full);
 

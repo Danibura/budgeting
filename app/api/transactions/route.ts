@@ -1,7 +1,8 @@
 import { db } from "@/db/drizzle";
 import { transactions } from "@/db/schema";
-import { Transaction } from "@/types/types";
+import { InsertTransaction } from "@/lib/validation";
 import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
 
 import { revalidatePath } from "next/cache";
 
@@ -18,8 +19,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  if (!session) return Response.json({ error: "Unauthorized" });
+  const userId = session.user.id;
+
   const body = await request.json();
-  const values: typeof transactions.$inferInsert = {
+  const values: InsertTransaction = {
     type: body.type as "income" | "outcome",
     category: body.category,
     description: body.description,
@@ -28,6 +35,7 @@ export async function POST(request: Request) {
     recurring: Boolean(body.recurring),
     frequency: body.frequency,
     endDate: body.endDate,
+    userId: userId,
   };
 
   const result = await db.insert(transactions).values(values).returning();
@@ -40,8 +48,14 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  if (!session) return Response.json({ error: "Unauthorized" });
+  const userId = session.user.id;
+
   const body = await request.json();
-  const values: typeof transactions.$inferInsert = {
+  const values: InsertTransaction = {
     type: body.type as "income" | "outcome",
     category: body.category,
     description: body.description,
@@ -50,6 +64,7 @@ export async function PUT(request: Request) {
     recurring: Boolean(body.recurring),
     frequency: body.frequency,
     endDate: body.endDate ?? null,
+    userId: userId,
   };
 
   const result = await db

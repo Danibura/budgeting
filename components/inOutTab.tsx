@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Transaction } from "@/types/types";
+import type { Transaction } from "@/lib/validation";
 import { calcInOut } from "@/lib/utils";
 
 import { TrendingDownIcon, TrendingUp } from "lucide-react";

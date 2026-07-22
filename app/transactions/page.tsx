@@ -3,11 +3,25 @@ import Header from "@/components/header";
 import TransactionsList from "@/components/transactionsList";
 import { db } from "@/db/drizzle";
 import { transactions } from "@/db/schema";
-import type { Transaction } from "@/types/types";
+import type { Transaction } from "@/lib/validation";
 import { fullTransactions } from "@/lib/utils";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
 
 export default async function TransactionsPage() {
-  const result = (await db.select().from(transactions)) as Transaction[];
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/login");
+
+  const result = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.userId, session.user.id))) as Transaction[];
+
   const full = fullTransactions(result);
 
   return (

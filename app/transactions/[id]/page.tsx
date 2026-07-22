@@ -3,7 +3,7 @@ import { transactions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Header from "@/components/header";
 import TransactionForm from "@/components/transactionForm";
-import type { Transaction } from "@/types/types";
+import type { Transaction } from "@/lib/validation";
 
 export default async function TransactionPage({
   params,

@@ -1,4 +1,4 @@
-import type { TransactionWithOccurrency } from "@/types/types";
+import type { TransactionWithOccurrency } from "@/lib/validation";
 import { incomeCategories } from "@/lib/utils";
 import { outcomeCategories } from "@/lib/utils";
 
