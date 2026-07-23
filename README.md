@@ -1,1 +1,1 @@
-budgeting.danibura.me
+www.budgeting.danibura.me
