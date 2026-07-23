@@ -22,7 +22,7 @@ export default async function Home() {
   if (session) redirect("/home");
 
   return (
-    <div className="flex flex-col flex-1 font-sans w-full">
+    <div className="flex flex-col flex-1 font-sans w-full min-h-screen bg-emerald-700">
       <div className="flex flex-row px-3 py-2 justify-between items-center  w-full text-emerald-600 bg-white">
         <img
           src="/budgetingLogo.png"
@@ -36,7 +36,7 @@ export default async function Home() {
           Get started
         </Link>
       </div>
-      <div className="flex flex-col flex-1 bg-emerald-700 font-sans w-full items-center justify-center">
+      <div className="flex flex-col flex-1  font-sans w-full items-center justify-center ">
         <div className="flex flex-row flex-wrap justify-center items-center gap-y-10 gap-x-60">
           <div className="flex flex-col gap-4 p-4 max-w-180">
             <h1 className="font-extrabold text-4xl md:text-7xl  text-center text-white">
@@ -55,6 +55,7 @@ export default async function Home() {
           />
         </div>
       </div>
+      <div className="mt-40"> </div>
     </div>
   );
 }
