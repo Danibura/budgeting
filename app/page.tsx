@@ -36,7 +36,7 @@ export default async function Home() {
           Get started
         </Link>
       </div>
-      <div className="flex flex-col flex-1  font-sans w-full items-center justify-center ">
+      <div className="flex flex-col flex-1  font-sans w-full items-center justify-center py-20">
         <div className="flex flex-row flex-wrap justify-center items-center gap-y-10 gap-x-60">
           <div className="flex flex-col gap-4 p-4 max-w-180">
             <h1 className="font-extrabold text-4xl md:text-7xl  text-center text-white">
@@ -55,7 +55,6 @@ export default async function Home() {
           />
         </div>
       </div>
-      <div className="mt-40"> </div>
     </div>
   );
 }
