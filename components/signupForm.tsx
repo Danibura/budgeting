@@ -112,6 +112,16 @@ export default function SignupForm() {
           )}
         </div>
         {error && <h2 className="text-sm text-red-500">{error}</h2>}
+        <div className="text-left w-full text-sm">
+          * By registering, you accept our{" "}
+          <Link href="/termsOfService" className="underline">
+            Terms of service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacyPolicy" className="underline">
+            Privacy policy
+          </Link>
+        </div>
         <div className="flex flex-col gap-4 w-full mt-4">
           <button
             className="bg-stone-800 text-white p-2 rounded-lg w-full disabled:bg-stone-500"
