@@ -106,7 +106,7 @@ export function fullTransactions(transactions: Transaction[]) {
       (transaction) => {
         if (!transaction.recurring) return transaction;
         else {
-          let occurrences = [];
+          let occurrences: TransactionWithOccurrency[] = [];
           let nextDate = transaction.date;
           let today = new Date().toISOString().split("T")[0];
           while (
@@ -156,7 +156,7 @@ export function calcMonthSavings(transactions: TransactionWithOccurrency[]) {
     const sorted = orderTransactions(transactions, "asc");
     let today = new Date().toISOString().split("T")[0];
     let nextMonth = transactions[0].date;
-    while (nextMonth < today) {
+    while (nextMonth <= today) {
       monthSavings.push({ month: nextMonth, savings: 0 });
       nextMonth = addFrequency(nextMonth, "monthly");
     }

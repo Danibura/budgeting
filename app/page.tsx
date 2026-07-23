@@ -25,12 +25,15 @@ export default async function Home() {
     .select()
     .from(transactions)
     .where(eq(transactions.userId, session.user.id))) as Transaction[];
+  console.log("Result: ", result);
 
   console.log(result);
   const full: TransactionWithOccurrency[] = fullTransactions(result);
   const lastThree = full.slice(0, 3);
   const monthSavings = calcMonthSavings(full);
   console.log("Full ", full);
+  console.log("Month savings: ", monthSavings);
+
   return (
     <div className="flex flex-col flex-1 bg-white font-sans w-full">
       <Header title="Home"></Header>
@@ -43,6 +46,7 @@ export default async function Home() {
         )}
 
         <TransactionsTab transactions={lastThree} />
+
         {full.length > 0 && (
           <Link href="/inOut/" className="w-full max-w-xl">
             <InOutTab transactions={full} />
