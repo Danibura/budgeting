@@ -11,7 +11,7 @@ export default function SignoutButton() {
 
   return (
     <button
-      className="bg-emerald-700 text-stone-50 text-sm rounded-sm p-2"
+      className="bg-emerald-700 text-stone-50 text-sm rounded-sm p-2 cursor-pointer"
       onClick={signout}
     >
       Signout

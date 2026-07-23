@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 type Props = { transaction?: Transaction };
 
 export default function TransactionForm(props: Props) {
+  const [deleting, setDeleting] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(createTransactionSchema),
     defaultValues: props.transaction ?? {
@@ -62,6 +64,7 @@ export default function TransactionForm(props: Props) {
   }
 
   async function handleDelete() {
+    setDeleting(true);
     if (props.transaction) {
       const transaction: Transaction = props.transaction;
       try {
@@ -201,17 +204,18 @@ export default function TransactionForm(props: Props) {
         <div className="flex flex-row justify-between">
           <button
             type="submit"
-            className="bg-emerald-700 text-emerald-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
+            className={` text-emerald-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50 cursor-pointer ${form.formState.isSubmitting ? "bg-emerald-500" : "bg-emerald-700"}`}
+            disabled={form.formState.isSubmitting}
           >
-            Save
+            {form.formState.isSubmitting ? "Saving..." : "Save"}
           </button>
           {props.transaction && (
             <button
               type="button"
               onClick={handleDelete}
-              className="bg-red-700 text-red-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50"
+              className={` text-red-50 text-md py-1.5 px-2 rounded-sm mt-4 shadow-sm shadow-stone-500/50 cursor-pointer ${deleting ? "bg-red-500" : "bg-red-700"}`}
             >
-              Delete
+              {deleting ? "Deleting..." : "Delete"}
             </button>
           )}
         </div>
