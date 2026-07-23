@@ -36,7 +36,7 @@ export default function SignupForm() {
         return;
       }
 
-      router.push("/login");
+      router.push(`/verification?email=${getValues("email")}`);
       router.refresh();
     } catch (e) {
       console.error(e);

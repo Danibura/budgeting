@@ -19,39 +19,41 @@ export default async function Home() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/login");
-
-  const result = (await db
-    .select()
-    .from(transactions)
-    .where(eq(transactions.userId, session.user.id))) as Transaction[];
-  console.log("Result: ", result);
-
-  console.log(result);
-  const full: TransactionWithOccurrency[] = fullTransactions(result);
-  const lastThree = full.slice(0, 3);
-  const monthSavings = calcMonthSavings(full);
-  console.log("Full ", full);
-  console.log("Month savings: ", monthSavings);
+  if (session) redirect("/home");
 
   return (
-    <div className="flex flex-col flex-1 bg-white font-sans w-full">
-      <Header title="Home"></Header>
+    <div className="flex flex-col flex-1 font-sans w-full">
+      <div className="flex flex-row px-3 py-2 justify-between items-center  w-full text-emerald-600 bg-white">
+        <img
+          src="/budgetingLogo.png"
+          alt="Budgeting logo"
+          className="w-10 h-10"
+        />
+        <Link
+          href="/home"
+          className="bg-emerald-700 text-stone-50 text-sm rounded-sm p-2 shadow-sm shadow-stone-500/50"
+        >
+          Get started
+        </Link>
+      </div>
+      <div className="flex flex-col flex-1 bg-emerald-700 font-sans w-full items-center justify-center">
+        <div className="flex flex-row flex-wrap justify-center items-center gap-y-10 gap-x-60">
+          <div className="flex flex-col gap-4 p-4 max-w-180">
+            <h1 className="font-extrabold text-4xl md:text-7xl  text-center text-white">
+              The easy way to track your savings
+            </h1>
+            <h2 className="text-center text-lg md:text-2xl text-emerald-50">
+              Completely free. Details shown in a simple manner. Data shared
+              across devices.
+            </h2>
+          </div>
 
-      <div className="flex flex-col flex-1 items-center bg-stone-100 font-sans w-full p-4 gap-8">
-        {full.length > 0 && (
-          <Link href="/savings" className="w-full max-w-4xl">
-            <ActualSavings monthSavings={monthSavings} />
-          </Link>
-        )}
-
-        <TransactionsTab transactions={lastThree} />
-
-        {full.length > 0 && (
-          <Link href="/inOut/" className="w-full max-w-xl">
-            <InOutTab transactions={full} />
-          </Link>
-        )}
+          <img
+            src="/phoneMockup.png"
+            alt="Phone mockup"
+            className="w-80 h-120"
+          />
+        </div>
       </div>
     </div>
   );

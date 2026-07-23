@@ -357,3 +357,32 @@ export function thisYearOutcomes(
   });
   return yearCategories;
 }
+
+export function getInboxUrl(email: string) {
+  const domain = email.split("@")[1];
+
+  switch (domain) {
+    case "gmail.com":
+      return "https://mail.google.com";
+
+    case "outlook.com":
+    case "hotmail.com":
+    case "live.com":
+      return "https://outlook.live.com/mail/";
+
+    case "yahoo.com":
+      return "https://mail.yahoo.com";
+
+    case "icloud.com":
+    case "me.com":
+    case "mac.com":
+      return "https://www.icloud.com/mail";
+
+    case "proton.me":
+    case "protonmail.com":
+      return "https://mail.proton.me";
+
+    default:
+      return "";
+  }
+}

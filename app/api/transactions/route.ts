@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
   const result = await db.insert(transactions).values(values).returning();
 
-  revalidatePath("/");
+  revalidatePath("/home");
   revalidatePath("/transactions");
   revalidatePath("/savings");
   revalidatePath("/inOut");
@@ -72,7 +72,7 @@ export async function PUT(request: Request) {
     .set(values)
     .where(eq(transactions.id, Number(body.id)));
 
-  revalidatePath("/");
+  revalidatePath("/home");
   revalidatePath("/transactions");
   revalidatePath("/savings");
   revalidatePath("/inOut");
@@ -87,7 +87,7 @@ export async function DELETE(request: Request) {
     .where(eq(transactions.id, body.id))
     .returning();
 
-  revalidatePath("/");
+  revalidatePath("/home");
   revalidatePath("/transactions");
   revalidatePath("/savings");
   revalidatePath("/inOut");
