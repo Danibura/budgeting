@@ -21,6 +21,8 @@ export default async function Home() {
 
   if (!session) redirect("/login");
 
+  const name = session.user.name.split(" ")[0];
+
   const result = (await db
     .select()
     .from(transactions)
@@ -37,6 +39,9 @@ export default async function Home() {
       <Header title="Home"></Header>
 
       <div className="flex flex-col flex-1 items-center bg-stone-100 font-sans w-full p-4 gap-8">
+        <div className="flex flex-row justify-start w-full max-w-4xl">
+          <h1 className="font-bold md:text-lg">Hello {name}!</h1>
+        </div>
         {full.length > 0 && (
           <Link href="/savings" className="w-full max-w-4xl">
             <ActualSavings monthSavings={monthSavings} />
