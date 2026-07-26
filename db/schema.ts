@@ -8,6 +8,7 @@ import {
   pgEnum,
   timestamp,
   index,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
 
 import { relations } from "drizzle-orm";
@@ -115,7 +116,7 @@ export const transactions = pgTable("transactions", {
   type: typeEnum().notNull(),
   category: text().notNull(),
   description: text(),
-  amount: integer().notNull(),
+  amount: doublePrecision().notNull(),
   date: date().notNull(),
   recurring: boolean().default(false).notNull(),
   frequency: frequencyEnum(),

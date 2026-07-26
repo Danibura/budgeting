@@ -8,7 +8,8 @@ export default function ActualSavings(props: Props) {
   let actualSavings = 0;
   if (props.monthSavings.length > 0) {
     const lastIndex = props.monthSavings.length - 1;
-    actualSavings = props.monthSavings[lastIndex].savings;
+    actualSavings =
+      Math.round(props.monthSavings[lastIndex].savings * 100) / 100;
   }
 
   return (

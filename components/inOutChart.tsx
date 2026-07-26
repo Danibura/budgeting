@@ -62,7 +62,12 @@ export default function InOutChart(props: Props) {
   const monthInOut = calcInOut(props.transactions);
   const yearlyInOut = thisYearInOut(monthInOut, year);
   const lastIndex = monthInOut.length - 1;
-  const net = monthInOut[lastIndex].incomes - monthInOut[lastIndex].outcomes;
+  const net =
+    Math.round(
+      ((monthInOut[lastIndex].incomes ?? 0) -
+        (monthInOut[lastIndex].outcomes ?? 0)) *
+        100,
+    ) / 100;
   if (firstYear != year) firstMonth = "January";
   if (thisYear != year) lastMonth = "December";
 

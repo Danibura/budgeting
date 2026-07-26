@@ -44,8 +44,11 @@ export default function InOutTab(props: Props) {
     const lastIndex = monthInOut.length - 1;
     const actualInOut = [monthInOut[lastIndex]];
     const net =
-      (monthInOut[lastIndex].incomes ?? 0) -
-      (monthInOut[lastIndex].outcomes ?? 0);
+      Math.round(
+        ((monthInOut[lastIndex].incomes ?? 0) -
+          (monthInOut[lastIndex].outcomes ?? 0)) *
+          100,
+      ) / 100;
 
     return (
       <Card className="shadow-sm shadow-stone-500/50 w-full max-w-xl ">

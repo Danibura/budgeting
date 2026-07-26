@@ -141,7 +141,8 @@ export default function TransactionForm(props: Props) {
             {...form.register("amount", { valueAsNumber: true })}
             className="border border-stone-400 rounded-sm p-2 bg-white"
             required
-            min={1}
+            min={0.01}
+            step={0.01}
           />
         </div>
         <div className="flex flex-row justify-between items-center w-full">
