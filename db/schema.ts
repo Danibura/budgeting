@@ -122,5 +122,5 @@ export const transactions = pgTable("transactions", {
   endDate: date(),
   userId: text()
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
 });

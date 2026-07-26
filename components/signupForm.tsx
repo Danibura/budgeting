@@ -112,7 +112,7 @@ export default function SignupForm() {
           )}
         </div>
         {error && <h2 className="text-sm text-red-500">{error}</h2>}
-        <div className="text-left w-full text-sm">
+        <div className="text-left w-full text-xs md:text-sm text-stone-400">
           * By registering, you accept our{" "}
           <Link href="/termsOfService" className="underline">
             Terms of service

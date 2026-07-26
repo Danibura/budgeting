@@ -22,3 +22,24 @@ export async function sendVerificationEmail({
     `,
   });
 }
+
+export async function sendDeletionEmail({
+  email,
+  url,
+}: {
+  email: string;
+  url: string;
+}) {
+  await resend.emails.send({
+    from: "noreply@danibura.me",
+    to: email,
+    subject: "Confirm account deletion",
+    html: `
+      <h1>Confirm account deletion</h1>
+      <p>Click here to confirm account deletion:</p>
+      <a href="${url}">
+        Delete account
+      </a>
+    `,
+  });
+}

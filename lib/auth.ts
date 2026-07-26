@@ -3,7 +3,7 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { db } from "@/db/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import * as schema from "@/db/schema";
-import { sendVerificationEmail } from "./email";
+import { sendVerificationEmail, sendDeletionEmail } from "./email";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -15,7 +15,7 @@ export const auth = betterAuth({
 
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      await sendVerificationEmail({
+      sendVerificationEmail({
         email: user.email,
         url,
       });
@@ -33,6 +33,14 @@ export const auth = betterAuth({
       enabled: true,
       trustedProviders: ["google"],
       allowDifferentEmails: true,
+    },
+  },
+  user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        sendDeletionEmail({ email: user.email, url });
+      },
     },
   },
 

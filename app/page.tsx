@@ -1,13 +1,4 @@
-import TransactionsTab from "@/components/transactionsTab";
-import Header from "@/components/header";
-import { fullTransactions, calcMonthSavings } from "@/lib/utils";
-import { db } from "@/db/drizzle";
-import { transactions } from "@/db/schema";
-import { Transaction, TransactionWithOccurrency } from "@/lib/validation";
-import InOutTab from "@/components/inOutTab";
 import Link from "next/link";
-import ActualSavings from "@/components/actualSavings";
-import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -53,6 +44,13 @@ export default async function Home() {
             alt="Phone mockup"
             className="w-80 h-120"
           />
+        </div>
+      </div>
+      <div className="text-xs md:text-sm text-white flex flex-row justify-between px-8 py-8 ">
+        <Link href="https://danibura.me/">danibura · 2026</Link>
+        <div className="flex flex-row gap-8">
+          <Link href="/termsOfService">Terms</Link>
+          <Link href="/privacyPolicy">Privacy</Link>
         </div>
       </div>
     </div>
