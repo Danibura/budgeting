@@ -3,6 +3,7 @@ import { transactions } from "@/db/schema";
 import { InsertTransaction } from "@/lib/validation";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 import { revalidatePath } from "next/cache";
 
@@ -20,12 +21,13 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({
-    headers: request.headers,
+    headers: await headers(),
   });
   if (!session) return Response.json({ error: "Unauthorized" });
   const userId = session.user.id;
 
   const body = await request.json();
+
   const values: InsertTransaction = {
     type: body.type as "income" | "outcome",
     category: body.category,
@@ -34,7 +36,7 @@ export async function POST(request: Request) {
     date: body.date,
     recurring: Boolean(body.recurring),
     frequency: body.frequency,
-    endDate: body.endDate,
+    endDate: body.endDate == "" ? null : body.endDate,
     userId: userId,
   };
 
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
   revalidatePath("/transactions");
   revalidatePath("/savings");
   revalidatePath("/inOut");
-  return Response.json(result);
+  return Response.json(values);
 }
 
 export async function PUT(request: Request) {
